@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout/layout">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+
+<div layout:fragment="content">
+
+    <section id="breadcrumbs" class="breadcrumbs">
+        <div class="container">
+
+            <ol>
+                <li><a href="index.html">The Moment</a></li>
+                <li>Personal Board</li>
+            </ol>
+            <h2> Register </h2>
+
+        </div>
+    </section><!-- End Breadcrumbs -->
+
+    <div class="card-body">
+
+        <div class="float-end" >
+            <select id="searchType"  >
+                <option value=""  th:selected="${pageRequestDTO.type} == null">-----------</option>
+                <option value="T"  th:selected="${pageRequestDTO.type} =='T'">제목</option>
+                <option value="C"  th:selected="${pageRequestDTO.type} =='C'">내용</option>
+                <option value="W"  th:selected="${pageRequestDTO.type} =='W'">작성자</option>
+                <option value="TC" th:selected="${pageRequestDTO.type} == 'TC'">제목/내용</option>
+                <option value="TCW" th:selected="${pageRequestDTO.type} == 'TCW'" >제목 혹은 내용 혹은 작성자</option>
+            </select>
+            <input type="text" id="keyword"  th:value="${pageRequestDTO.keyword}">
+            <button id="searchBtn" class="btn btn-info" onclick="search()">Search</button>
+        </div>
+
+
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">mbNo</th>
+                <th scope="col">Title</th>
+                <th scope="col">Writer</th>
+                <th scope="col">RegDate</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="board:${responseDTO.dtoList}">
+                <th scope="row">[[${board.mbNo}]]</th>
+                <td><a th:href="|javascript:movePage(${responseDTO.page}, ${board.mbNo} )|">[[${board.mbTitle}]]</a> </td>
+                <td>[[${ board.mbWriter}]]</td>
+                <td>[[${#temporals.format(board.mbRegDate, 'yyyy/MM/dd')}]]</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="d-flex justify-content-center">
+        <ul class="pagination">
+            <li th:if="${responseDTO.prev}" class="page-item">
+                <a class="page-link" th:href="|javascript:movePage(${responseDTO.start-1})|" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                    <span class="sr-only">Previous</span>
+                </a>
+            </li>
+
+            <li th:each="num: ${#numbers.sequence( responseDTO.start , responseDTO.end)}" th:class="|page-item ${responseDTO.page == num?'active':''}|">
+                <a class="page-link" th:href="|javascript:movePage(${num})|">[[${num}]]</a>
+            </li>
+
+            <li th:if="${responseDTO.next}" class="page-item">
+                <a class="page-link" th:href="|javascript:movePage(${responseDTO.end+1})|" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                    <span class="sr-only">Next</span>
+                </a>
+            </li>
+
+        </ul>
+
+    </div>
+
+</div>
+
+
+    <th:block  layout:fragment="script">
+
+
+        <div class="modal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Modal title</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Modal body text goes here.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">Save changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <script th:inline="javascript">
+
+            const myModal = new bootstrap.Modal(document.querySelector(".modal"))
+
+            const result = [[${result}]]
+
+            if(result){
+                myModal.show()
+            }
+
+            const pageRequest = [[${pageRequestDTO}]]
+
+            function movePage(page, mbNo) {
+
+                console.log(pageRequest)
+
+                let uri ="";
+
+                const type = pageRequest.type
+                const keyword = pageRequest.keyword
+
+                let searchQuery = ''
+                if(type && keyword){
+                    searchQuery += `&type=${type}&keyword=${keyword}`
+                }
+
+                if(mbNo) {
+                    uri = `/miniboard/read?mbNo=${mbNo}&page=${page}` + searchQuery
+                }else {
+                    uri = `/miniboard/list?page=${page}` + searchQuery
+                }
+                self.location = uri
+            }
+
+            function search() {
+                const searchSelect = document.querySelector("#searchType")
+
+                const type = searchSelect.options[searchSelect.selectedIndex].value
+
+                const keyword = encodeURI(document.querySelector("#keyword").value)
+
+                console.log("type", type, "keyword", keyword)
+
+                self.location =`/miniboard/list?page=1&type=${type}&keyword=${keyword}`
+            }
+
+        </script>
+
+
+    </th:block>
+
+
+</body>
+</html>

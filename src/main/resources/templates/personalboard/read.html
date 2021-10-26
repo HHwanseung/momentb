@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout/layout">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+
+<div layout:fragment="content">
+
+    <section id="breadcrumbs" class="breadcrumbs">
+        <div class="container">
+
+            <ol>
+                <li><a href="index.html">The Moment</a></li>
+                <li>Personal Board</li>
+            </ol>
+            <h2> Read </h2>
+
+        </div>
+    </section><!-- End Breadcrumbs -->
+
+    <div class="card">
+        <div class="card-header">
+            Board Read
+        </div>
+        <div class="card-body">
+            <div class="input-group mb-3">
+                <span class="input-group-text">Bno</span>
+                <input type="text" name="pbNo" class="form-control" readonly
+                       th:value="${dto.pbNo}"  >
+            </div>
+
+            <div class="input-group mb-3">
+                <span class="input-group-text">Writer</span>
+                <input type="text" name="memId" class="form-control"  readonly
+                       th:value="${dto.memId}">
+            </div>
+
+            <div class="input-group mb-3">
+                <span class="input-group-text">RegDate</span>
+                <input type="text" name="pbRegDate" class="form-control" readonly
+                       th:value="${#temporals.format(dto.pbRegDate, 'yyyy/MM/dd HH:mm:ss')}" >
+            </div>
+
+            <div class="input-group mb-3">
+                <span class="input-group-text">ModDate</span>
+                <input type="text" name="modDate" class="form-control" readonly
+                       th:value="${#temporals.format(dto.pbModDate, 'yyyy/MM/dd HH:mm:ss')}">
+            </div>
+
+            <div class="input-group">
+                <span class="input-group-text">Content</span>
+                <textarea class="form-control" aria-label="With textarea" name="pbContent" rows="4">[[${dto.pbContent}]]</textarea>
+            </div>
+
+            <div class="my-4">
+                <div class="my-4">
+                    <div class="float-end">
+                        <button type="button" class="btn btn-primary" th:onclick="|modify(${dto.pbNo})|">Modify</button>
+                        <button type="button" class="btn btn-secondary" th:onclick="|moveList()|">List</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- end card-->
+
+
+
+<th:block  layout:fragment="script">
+
+    <script th:inline="javascript">
+        function modify(pbNo){
+
+            const page = [[${pageRequestDTO.page}]]
+            const size = [[${pageRequestDTO.size}]]
+            const type = [[${pageRequestDTO.type}]]
+            const keyword = [[${pageRequestDTO.keyword}]]
+
+            let searchQuery = ''
+
+            if(type && keyword){
+                searchQuery += `&type=${type}&keyword=${keyword}`
+            }
+
+            self.location=`/personalboard/modify?pbNo=${pbNo}&page=${page}&size=${size}`+searchQuery
+
+        }
+
+        function moveList(){
+
+            const page = [[${pageRequestDTO.page}]]
+            const size = [[${pageRequestDTO.size}]]
+            const type = [[${pageRequestDTO.type}]]
+            const keyword = [[${pageRequestDTO.keyword}]]
+
+            let searchQuery = ''
+
+            if(type && keyword){
+                searchQuery += `&type=${type}&keyword=${keyword}`
+            }
+
+            self.location=`/personalboard/list?page=${page}&size=${size}` + searchQuery
+
+        }
+
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <script th:inline="javascript">
+
+
+    </script>
+
+
+
+</th:block>
