@@ -37,6 +37,25 @@
         [id$="-toggle"] {
             margin-right: 15px;
         }
+
+
+        .fileContent{
+            outline: 2px dashed #92b0b3 ;
+            outline-offset:-10px;
+            text-align: center;
+            transition: all .15s ease-in-out;
+            width: 300px;
+            height: 300px;
+            background-color: gray;
+        }
+
+        .fileContent img, .content video{
+            width:100%;
+            height:100%;
+            display:none;
+        }
+
+
     </style>
 
     <link rel="stylesheet" th:href="@{/assets/css/canvasstyle.css}">
@@ -58,74 +77,308 @@
             <div class="card-header">
                 Board Register
             </div>
+
             <div class="card-body">
-            <form th:action="@{/personalboard/register}" method="post">
+            <!--<form th:action="@{/personalboard/register}" method="post">-->
 
-                    <div class="input-group mb-3">
-                        <span class="input-group-text">Writer</span>
-                        <input type="text" name="writer" class="form-control" placeholder="Writer">
-                    </div>
+                <!-- file -->
+                <div class="fileContent">
 
-                    <div class="input-group">
-                        <span class="input-group-text">Content</span>
-                        <textarea class="form-control" aria-label="With textarea" name="pbContent" rows="4"></textarea>
-                    </div>
+                </div>
 
-                    <div class="input-group">
-                        <span class="input-group-text">해시 태그를 입력해주세요. (,로 구분하여 입력해주세요. 예) 태그1,태그2,태그3) </span>
-                        <span contenteditable="true" type="text"  class="form-control tagInput" ></span>
-                    </div>
+                <div class="input-group">
+                    <span class="input-group-text">Content</span>
+                    <textarea class="form-control" aria-label="With textarea" name="pbContent" rows="4"></textarea>
+                </div>
 
+                <div class="input-group">
+                    <span class="input-group-text">해시 태그를 입력해주세요. (,로 구분하여 입력해주세요. 예) 태그1,태그2,태그3) </span>
+                    <span contenteditable="true" type="text"  class="form-control tagInput" ></span>
+                </div>
 
+                <!-- folder-->
 
-                    <span id="faq-title">자주 묻는 질문(FAQ)</span>
-                    <div class="faq-content">
-                        <button class="question" id="que-1"><span id="que-1-toggle">+</span><span>'HTML'이란 무엇인가요?</span></button>
-                        <div class="answer" id="ans-1">하이퍼텍스트 마크업 언어(HyperText Markup Language)입니다.</div>
-                    </div>
-                    <div class="faq-content">
-                        <button class="question" id="que-2"><span id="que-2-toggle">+</span><span>'CSS'란 무엇인가요?</span></button>
-                        <div class="answer" id="ans-2">캐스케이딩 스타일 시트(Cascading Style Sheets)입니다.</div>
-                    </div>
-                    <div class="faq-content">
-                        <button class="question" id="que-3"><span id="que-3-toggle">+</span><span>'JavaScript'란 무엇인가요?</span></button>
-                        <div class="answer" id="ans-3">자바스크립트는 객체(Object)를 기초로 하는 스크립트 프로그래밍 언어입니다.</div>
-                    </div>
+                <span id="faq-title">기능</span>
 
+                <div class="faq-content">
+                    <button class="question" id="que-2"><span id="que-2-toggle">+</span><span>위치표시</span></button>
+                    <div class="answer" id="ans-2">
+                        <div class="map_wrap">
+                            <div id="map" style="width:100%; height:100%; position:relative; overflow:hidden"></div>
 
-                    <!--그림판시작-->
-                    <canvas id="jsCanvas" class="canvas"></canvas>
-                    <div class="controls"> <div class="controls_range">
-                        <input type="range" id="jsRange" min="0.1" max="5.0" value="2.5" step="0.1" /> </div>
-                        <div class="controls_btns"> <button id="jsMode">Fill</button>
-                            <button id="jsSave">Save</button> </div>
-                        <div class="controls_colors" id="jsColors">
-                            <div class="controls_color jsColor" style="background-color: #2c2c2c;"></div>
-                            <div class="controls_color jsColor" style="background-color: white;"></div>
-                            <div class="controls_color jsColor" style="background-color: #FF3B30;"></div>
-                            <div class="controls_color jsColor" style="background-color: #ff9500;"></div>
-                            <div class="controls_color jsColor" style="background-color: #4cd963;"></div>
-                            <div class="controls_color jsColor" style="background-color: #5ac8fa;"></div>
-                            <div class="controls_color jsColor" style="background-color: #0579ff;"></div>
-                            <div class="controls_color jsColor" style="background-color: #5856d6;"></div> </div> </div>
-
-                    <!--그림판 끝-->
-                    <div class="my-4">
-                        <div class="float-end hiddens">
-                          <button type="submit" class="btn btn-primary">Submit</button>
-                            <button type="result" class="btn btn-secondary">Reset</button>
+                            <div id="menu_wrap" class="bg_white">
+                                <div class="option">
+                                    <div>
+                                        키워드 : <input type="text" value="서울역" id="keyword" size="15">
+                                        <button onclick="searchPlaces(); return false;">검색하기</button>
+                                    </div>
+                                </div>
+                                <hr>
+                                <ul id="placesList"></ul>
+                                <div id="pagination"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <!-- 위도 및 경도 좌표 및 위치정보 -->
+                            <input type="text" id="fulladdress" name="fulladdress" style="width:100%;" disabled readonly>
+                            <input type="text" id="pName" name="pName" value="" readonly>
+                            <input type="text" id="pAddress" name="pAddress" value="" readonly>
+                            <input type="text" id="pLat" name="pLat" value="" readonly>
+                            <input type="text" id="pLng" name="pLng" value="" readonly>
                         </div>
                     </div>
-               </form>
+                </div>
+
+                <div class="faq-content">
+                    <button class="question" id="que-3"><span id="que-3-toggle">+</span><span>캔버스</span></button>
+                    <div class="answer" id="ans-3">
+                        <!--그림판시작-->
+                        <canvas id="jsCanvas" class="canvas"></canvas>
+                        <div class="controls"> <div class="controls_range">
+                            <input type="range" id="jsRange" min="0.1" max="5.0" value="2.5" step="0.1" /> </div>
+                            <div class="controls_btns"> <button id="jsMode">Fill</button>
+                                <button id="jsSave">Save</button> </div>
+                            <div class="controls_colors" id="jsColors">
+                                <div class="controls_color jsColor" style="background-color: #2c2c2c;"></div>
+                                <div class="controls_color jsColor" style="background-color: white;"></div>
+                                <div class="controls_color jsColor" style="background-color: #FF3B30;"></div>
+                                <div class="controls_color jsColor" style="background-color: #ff9500;"></div>
+                                <div class="controls_color jsColor" style="background-color: #4cd963;"></div>
+                                <div class="controls_color jsColor" style="background-color: #5ac8fa;"></div>
+                                <div class="controls_color jsColor" style="background-color: #0579ff;"></div>
+                                <div class="controls_color jsColor" style="background-color: #5856d6;"></div> </div> </div>
+
+                        <!--그림판 끝-->
+
+                        <div class="my-4">
+                            <div class="float-end hiddens">
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                                <button type="result" class="btn btn-secondary">Reset</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+               <!--</form>-->
             </div>
         </div>
     </div>
 
 <th:block  layout:fragment="script">
-
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=be49d75a3ddca2d7f6dfda5c02603d87&libraries=services"></script>
+    <script th:src="@{/assets/js/fileContent.js}"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script th:src="@{/assets/js/canvasapp.js}"></script>
     <script th:inline="javascript">
+
+        //map
+
+        // 마커를 담을 배열입니다
+        var markers = [];
+
+        var mapContainer = document.getElementById('map'), // 지도를 표시할 div
+            mapOption = {
+                center: new kakao.maps.LatLng(37.566826, 126.9786567), // 지도의 중심좌표
+                level: 3 // 지도의 확대 레벨
+            };
+
+        // 지도를 생성합니다
+        var map = new kakao.maps.Map(mapContainer, mapOption);
+
+        // 장소 검색 객체를 생성합니다
+        var ps = new kakao.maps.services.Places();
+
+        // 검색 결과 목록이나 마커를 클릭했을 때 장소명을 표출할 인포윈도우를 생성합니다
+        var infowindow = new kakao.maps.InfoWindow({zIndex: 1});
+
+        // 키워드로 장소를 검색합니다
+        searchPlaces();
+
+        // 키워드 검색을 요청하는 함수입니다
+        function searchPlaces() {
+
+            var keyword = document.getElementById('keyword').value;
+
+            if (!keyword.replace(/^\s+|\s+$/g, '')) {
+                alert('키워드를 입력해주세요!');
+                return false;
+            }
+
+            // 장소검색 객체를 통해 키워드로 장소검색을 요청합니다
+            ps.keywordSearch(keyword, placesSearchCB);
+        }
+
+        // 장소검색이 완료됐을 때 호출되는 콜백함수 입니다
+        function placesSearchCB(data, status, pagination) {
+            if (status === kakao.maps.services.Status.OK) {
+
+                // 정상적으로 검색이 완료됐으면
+                // 검색 목록과 마커를 표출합니다
+                displayPlaces(data);
+
+                // 페이지 번호를 표출합니다
+                displayPagination(pagination);
+
+            } else if (status === kakao.maps.services.Status.ZERO_RESULT) {
+
+                alert('검색 결과가 존재하지 않습니다.');
+                return;
+
+            } else if (status === kakao.maps.services.Status.ERROR) {
+
+                alert('검색 결과 중 오류가 발생했습니다.');
+                return;
+
+            }
+        }
+
+        // 검색 결과 목록과 마커를 표출하는 함수입니다
+        function displayPlaces(places) {
+
+            var listEl = document.getElementById('placesList'),
+                menuEl = document.getElementById('menu_wrap'),
+                fragment = document.createDocumentFragment(),
+                bounds = new kakao.maps.LatLngBounds(),
+                listStr = '';
+
+            // 검색 결과 목록에 추가된 항목들을 제거합니다
+            removeAllChildNods(listEl);
+
+            // 지도에 표시되고 있는 마커를 제거합니다
+            removeMarker();
+
+            for (var i = 0; i < places.length; i++) {
+
+                // 마커를 생성하고 지도에 표시합니다
+                var placePosition = new kakao.maps.LatLng(places[i].y, places[i].x),
+                    marker = addMarker(placePosition, i),
+                    itemEl = getListItem(i, places[i]); // 검색 결과 항목 Element를 생성합니다
+
+                // 검색된 장소 위치를 기준으로 지도 범위를 재설정하기위해
+                // LatLngBounds 객체에 좌표를 추가합니다
+                bounds.extend(placePosition);
+
+                // 마커와 검색결과 항목에 mouseover 했을때
+                // 해당 장소에 인포윈도우에 장소명을 표시합니다
+                // mouseout 했을 때는 인포윈도우를 닫습니다
+                (function (marker, pName, pAddressress, pAddress, pLat, pLng) {
+                    kakao.maps.event.addListener(marker, 'mouseover', function () {
+                        displayInfowindow(marker, pName);
+                    });
+
+                    kakao.maps.event.addListener(map, 'mouseout', function () {
+                        infowindow.close();
+                    });
+
+                    // 리스트의 아이템을 클릭하면 정보들을 hidden 영역으로 전송
+                    itemEl.onclick = function () {
+                        if (pAddressress) {
+                            document.getElementById('fulladdress').value = "[" + pName + "]" + pAddressress;
+                        } else {
+                            document.getElementById('fulladdress').value = "[" + pName + "]" + pAddress;
+                        }
+
+                        document.getElementById('pName').value = pName;
+                        if (pAddressress) {
+                            document.getElementById('pAddress').value = pAddressress;
+                        } else {
+                            document.getElementById('pAddress').value = pAddress;
+                        }
+                        document.getElementById('pLat').value = pLat;
+                        document.getElementById('pLng').value = pLng;
+                    };
+
+                    itemEl.onmouseover = function () {
+                        displayInfowindow(marker, pName);
+                    };
+
+                    itemEl.onmouseout = function () {
+                        infowindow.close();
+                    };
+                })(marker, places[i].place_name, places[i].road_address_name, places[i].address_name, places[i].y, places[i].x);
+
+                fragment.appendChild(itemEl);
+            }
+
+            // 검색결과 항목들을 검색결과 목록 Elemnet에 추가합니다
+            listEl.appendChild(fragment);
+            menuEl.scrollTop = 0;
+
+            // 검색된 장소 위치를 기준으로 지도 범위를 재설정합니다
+            map.setBounds(bounds);
+        }
+
+        // 검색결과 항목을 Element로 반환하는 함수입니다
+        function getListItem(index, places) {
+
+            var el = document.createElement('li'),
+                itemStr = '<span class="markerbg marker_' + (index + 1) + '"></span>' +
+                    '<div class="info" style="cursor:pointer;">' +
+                    '   <h5>' + places.place_name + '</h5>';
+
+            if (places.road_address_name) {
+                itemStr += '    <span>' + places.road_address_name + '</span>' +
+                    '   <span class="jibun gray">' + places.address_name + '</span>';
+            } else {
+                itemStr += '    <span>' + places.address_name + '</span>';
+            }
+            itemStr += '  <span class="tel">' + places.phone + '</span>';
+            +
+                '</div>';
+
+            el.innerHTML = itemStr;
+            el.className = 'item';
+
+            return el;
+        }
+
+
+        // 마커를 생성하고 지도 위에 마커를 표시하는 함수입니다
+        function addMarker(position, idx, title) {
+            var imageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png', // 마커 이미지 url, 스프라이트 이미지를 씁니다
+                imageSize = new kakao.maps.Size(36, 37),  // 마커 이미지의 크기
+                imgOptions = {
+                    spriteSize: new kakao.maps.Size(36, 691), // 스프라이트 이미지의 크기
+                    spriteOrigin: new kakao.maps.Point(0, (idx * 46) + 10), // 스프라이트 이미지 중 사용할 영역의 좌상단 좌표
+                    offset: new kakao.maps.Point(13, 37) // 마커 좌표에 일치시킬 이미지 내에서의 좌표
+                },
+                markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imgOptions),
+                marker = new kakao.maps.Marker({
+                    position: position, // 마커의 위치
+                    image: markerImage
+                });
+
+            marker.setMap(map); // 지도 위에 마커를 표출합니다
+            markers.push(marker);  // 배열에 생성된 마커를 추가합니다
+
+            return marker;
+        }
+
+        // 지도 위에 표시되고 있는 마커를 모두 제거합니다
+        function removeMarker() {
+            for (var i = 0; i < markers.length; i++) {
+                markers[i].setMap(null);
+            }
+            markers = [];
+        }
+
+        // 검색결과 목록 또는 마커를 클릭했을 때 호출되는 함수입니다
+        // 인포윈도우에 장소명을 표시합니다
+        function displayInfowindow(marker, title) {
+            var content = '<div style="padding:5px;z-index:1;">' + title + '</div>';
+
+            infowindow.setContent(content);
+            infowindow.open(map, marker);
+        }
+
+        // 검색결과 목록의 자식 Element를 제거하는 함수입니다
+        function removeAllChildNods(el) {
+            while (el.hasChildNodes()) {
+                el.removeChild(el.lastChild);
+            }
+        }
+
+//------------------------------kakao Map end----------------------------
+
 
         const items = document.querySelectorAll('.question');
 
@@ -137,7 +390,8 @@
                 document.getElementById(this.id + '-toggle').textContent = '+';
             } else {
                 document.getElementById(answerId).style.display = 'block';
-                document.getElementById(this.id + '-toggle').textContent = '-';
+                    document.getElementById(this.id + '-toggle').textContent = '-';
+                    map.relayout(mapOption);
             }
         }
 
@@ -166,6 +420,50 @@
         },false)
 
 
+
+        $('.fileContent')
+            .on("dragover", dragOver)
+            .on("dragleave", dragOver)
+            .on("drop", uploadFiles);
+
+        function dragOver(e){
+            e.stopPropagation();
+            e.preventDefault();
+            if (e.type == "dragover") {
+                $(e.target).css({
+                    "background-color": "black",
+                    "outline-offset": "-20px"
+                });
+            } else {
+                $(e.target).css({
+                    "background-color": "gray",
+                    "outline-offset": "-10px"
+                });
+            }
+        }
+
+        function uploadFiles(e) {
+            e.stopPropagation();
+            e.preventDefault();
+            dragOver(e);
+
+            e.dataTransfer = e.originalEvent.dataTransfer;
+            var files = e.target.files || e.dataTransfer.files;
+            if (files.length > 1) {
+                alert('하나만 올려라.');
+                return;
+            }
+            if (files[0].type.match(/image.*/)) {
+                $(e.target).css({
+                    "background-image": "url(" + window.URL.createObjectURL(files[0]) + ")",
+                    "outline": "none",
+                    "background-size": "100% 100%"
+                });
+            }else{
+                alert('이미지가 아닙니다.');
+                return;
+            }
+        }
         </script>
 
 
