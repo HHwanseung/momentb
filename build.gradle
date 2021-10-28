@@ -52,6 +52,8 @@ dependencies {
             "javax.annotation:javax.annotation-api",
             "com.querydsl:querydsl-apt:${queryDslVersion}:jpa")
 
+    implementation group: 'org.webjars', name: 'jquery', version: '3.6.0'
+
 }
 
 

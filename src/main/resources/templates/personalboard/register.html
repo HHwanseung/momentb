@@ -38,21 +38,18 @@
             margin-right: 15px;
         }
 
-
-        .fileContent{
-            outline: 2px dashed #92b0b3 ;
-            outline-offset:-10px;
-            text-align: center;
-            transition: all .15s ease-in-out;
-            width: 300px;
-            height: 300px;
-            background-color: gray;
+        #holder {
+            border: 10px dashed #ccc;
+            width: 500px;
+            height: 500px;
+        }
+        #holder.hover {
+            border: 10px dashed #333;
         }
 
-        .fileContent img, .content video{
-            width:100%;
-            height:100%;
-            display:none;
+        .contentstab{
+            width: 400px;
+            height: 300px;
         }
 
 
@@ -78,23 +75,48 @@
                 Board Register
             </div>
 
-            <div class="card-body">
+            <div class="card-body" >
+                <div class="row">
             <!--<form th:action="@{/personalboard/register}" method="post">-->
 
                 <!-- file -->
-                <div class="fileContent">
+                    <div class="col-lg-5">
+                        <article>
+                            <div id="holder"></div>
+                            <p id="status"></p>
+                        </article>
+                    </div>
 
+                <!-- Contents -->
+                    <div class="col-lg-5" >
+
+                        <div class="form-group">
+                            <input type="text" id="tag" size="7" placeholder="엔터로 해시태그를 등록해주세요." style="width: 300px;"/>
+                        </div>
+
+                        <div class="form-group">
+                            <input type="hidden" value="" name="tag" id="rdTag"/>
+                        </div>
+
+                        <ul id="tag-list">
+
+                        </ul>
+
+                        <div class="form-group mt-3">
+                            <textarea style="resize: none" class="form-control contentstab" name="content" rows="2" placeholder="내용" required></textarea>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="input-group">
-                    <span class="input-group-text">Content</span>
-                    <textarea class="form-control" aria-label="With textarea" name="pbContent" rows="4"></textarea>
-                </div>
+<!--                <div class="input-group">-->
+<!--                    <span class="input-group-text">Content</span>-->
+<!--                    <textarea class="form-control" aria-label="With textarea" name="pbContent" rows="4"></textarea>-->
+<!--                </div>-->
 
-                <div class="input-group">
-                    <span class="input-group-text">해시 태그를 입력해주세요. (,로 구분하여 입력해주세요. 예) 태그1,태그2,태그3) </span>
-                    <span contenteditable="true" type="text"  class="form-control tagInput" ></span>
-                </div>
+<!--                <div class="input-group">-->
+<!--                    <span class="input-group-text">해시 태그를 입력해주세요. (,로 구분하여 입력해주세요. 예) 태그1,태그2,태그3) </span>-->
+<!--                    <span contenteditable="true" type="text"  class="form-control tagInput" ></span>-->
+<!--                </div>-->
 
                 <!-- folder-->
 
@@ -162,10 +184,11 @@
             </div>
         </div>
     </div>
+<script async src="webjars/jquery/3.6.0/jquery.min.js"></script>
 
 <th:block  layout:fragment="script">
     <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=be49d75a3ddca2d7f6dfda5c02603d87&libraries=services"></script>
-    <script th:src="@{/assets/js/fileContent.js}"></script>
+    <script th:src="@{/assets/js/holder.js}"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script th:src="@{/assets/js/canvasapp.js}"></script>
     <script th:inline="javascript">
@@ -379,7 +402,6 @@
 
 //------------------------------kakao Map end----------------------------
 
-
         const items = document.querySelectorAll('.question');
 
         function openCloseAnswer() {
@@ -419,52 +441,118 @@
 
         },false)
 
+        // -------------------------------------------------------------------------------------------
 
 
-        $('.fileContent')
-            .on("dragover", dragOver)
-            .on("dragleave", dragOver)
-            .on("drop", uploadFiles);
+        //태그구현
+        $(document).ready(function () {
 
-        function dragOver(e){
-            e.stopPropagation();
-            e.preventDefault();
-            if (e.type == "dragover") {
-                $(e.target).css({
-                    "background-color": "black",
-                    "outline-offset": "-20px"
-                });
-            } else {
-                $(e.target).css({
-                    "background-color": "gray",
-                    "outline-offset": "-10px"
+            var tag = {};
+            var counter = 0;
+
+            // 태그를 추가한다.
+            function addTag(value) {
+                tag[counter] = value; // 태그를 Object 안에 추가
+                counter++; // counter 증가 삭제를 위한 del-btn 의 고유 id 가 된다.
+            }
+
+            // 최종적으로 서버에 넘길때 tag 안에 있는 값을 array type 으로 만들어서 넘긴다.
+            function marginTag() {
+                return Object.values(tag).filter(function (word) {
+                    return word !== "";
                 });
             }
-        }
 
-        function uploadFiles(e) {
-            e.stopPropagation();
-            e.preventDefault();
-            dragOver(e);
 
-            e.dataTransfer = e.originalEvent.dataTransfer;
-            var files = e.target.files || e.dataTransfer.files;
-            if (files.length > 1) {
-                alert('하나만 올려라.');
-                return;
-            }
-            if (files[0].type.match(/image.*/)) {
-                $(e.target).css({
-                    "background-image": "url(" + window.URL.createObjectURL(files[0]) + ")",
-                    "outline": "none",
-                    "background-size": "100% 100%"
-                });
-            }else{
-                alert('이미지가 아닙니다.');
-                return;
-            }
-        }
+            document.querySelector("#submitBtn").addEventListener("click", (e) => {
+                //1.submitbtn합체 ( 기존 tag에 값이 안담김 )
+                //2.tag 관련 히든태그 변경, EL 안먹혔었음.
+                //3.name의 변수명 변경 -> tag->tags[i].tag
+                e.stopPropagation()
+                e.preventDefault()
+                //현재 화면에 있는 파일 정보를 hidden태그들로 변화
+                const form1 = document.querySelector("#form1")
+                const fileDivArr = uploadResultDiv.querySelectorAll("div")
+                var value = marginTag(); // return array
+
+                console.log("---------------------------")
+                console.log(value)
+
+                alert(value)
+
+                let strtag = "";
+
+                for (var i = 0; i < value.length; i++) {
+                    strtag += `<input type='hidden' name='tags[\${i}].tag' value='\${value[i]}'>`
+                }
+
+                console.log(strtag);
+
+                $("#rdTag").html(strtag);
+
+                $(this).submit();
+
+                if (!fileDivArr) {
+
+                    form1.submit()
+
+                    return
+                }
+
+                document.querySelector(".temp").innerHTML = str
+                //form1.innerHTML += str
+                console.log(tag + "tag")
+                console.log(tag[0] + "tag0번째")
+                form1.submit()
+                //form을 submit
+
+            }, false)
+
+            $("#tag").on("keypress", function (e) {
+                var self = $(this);
+
+                // input 에 focus 되있을 때 엔터 및 스페이스바 입력시 구동
+                if (e.key === "Enter" || e.keyCode == 32) {
+
+                    var tagValue = self.val(); // 값 가져오기
+
+                    // 값이 없으면 동작 ㄴㄴ
+                    if (tagValue !== "") {
+
+                        // 같은 태그가 있는지 검사한다. 있다면 해당값이 array 로 return 된다.
+                        var result = Object.values(tag).filter(function (word) {
+                            return word === tagValue;
+                        })
+
+                        // 태그 중복 검사
+                        if (result.length == 0) {
+                            $("#tag-list").append("<li class='tag-item'>" + tagValue + "<span class='del-btn' idx='" + counter + "'>x</span></li>");
+                            addTag(tagValue);
+                            self.val("");
+                        } else {
+                            alert("태그값이 중복됩니다.");
+                        }
+                    }
+                    e.preventDefault(); // SpaceBar 시 빈공간이 생기지 않도록 방지
+                }
+            });
+
+            // 삭제 버튼
+            // 삭제 버튼은 비동기적 생성이므로 document 최초 생성시가 아닌 검색을 통해 이벤트를 구현시킨다.
+            $(document).on("click", ".del-btn", function (e) {
+                var index = $(this).attr("idx");
+                tag[index] = "";
+                $(this).parent().remove();
+            });
+        })
+
+
+
         </script>
 
 
 </th:block>
+
+
+
+
