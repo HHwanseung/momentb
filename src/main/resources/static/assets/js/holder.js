@@ -24,4 +24,9 @@ holder.ondrop = function (e) {
     reader.readAsDataURL(file);
 
     return false;
+
+
+
+
+
 };
