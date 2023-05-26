@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout/layout">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+
+<div layout:fragment="content">
+    <style>
+
+        .answer {
+            display: none;
+            padding-bottom: 30px;
+        }
+        #faq-title {
+            font-size: 25px;
+        }
+        .faq-content {
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .question {
+            font-size: 19px;
+            padding: 30px 0;
+            cursor: pointer;
+            border: none;
+            outline: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+        }
+        .question:hover {
+            color: #2962ff;
+        }
+        [id$="-toggle"] {
+            margin-right: 15px;
+        }
+
+        #holder {
+            border: 10px dashed #ccc;
+            width: auto;
+            height: 350px;
+        }
+        #holder.hover {
+            border: 10px dashed #333;
+        }
+
+        .row{
+            display: flex;
+            justify-content: center;
+        }
+
+
+    </style>
+
+    <link rel="stylesheet" th:href="@{/assets/css/textarea.css}">
+
+    <section id="breadcrumbs" class="breadcrumbs">
+
+        <div class="container">
+
+            <ol>
+                <li><a href="index.html">The Moment</a></li>
+                <li>Personal Board</li>
+            </ol>
+            <h2> Read </h2>
+
+        </div>
+    </section><!-- End Breadcrumbs -->
+
+    <div class="container">
+        <div class="card-header" style="margin-bottom: 30px;">
+            Board Read
+        </div>
+        <div class="card-body">
+
+            <div class="row" style="margin-bottom: 80px" >
+
+                <!-- image -->
+                <div class="col-lg-5">
+                      <div class="spinning">
+                            <!--image-->
+                          <div class="pic front">
+                              <img th:each="picture:${dto.pictures}"  th:if="${picture.selfDrawing == false}" th:src="@{/display(fileName=${picture.getLink()})}">
+                          </div>
+                        <!--handwriting-->
+                          <div class="pic back">
+                            <img th:each="picture:${dto.pictures}"  th:if="${picture.selfDrawing == true}" th:src="@{/display(fileName=${picture.getHandWritingLink()})}">
+                            </div>
+                        </div>
+<!--image--></div>
+
+                <!-- Contents -->
+                <div class="col-lg-4" id="tagContent" >
+
+                    <div class="wrap-input1 validate-input" data-validate = "Message is required">
+                        <input class="input1" type="text" name="pbRegDate" readonly placeholder="등록일"
+                               th:value="${#temporals.format(dto.pbRegDate, 'yyyy/MM/dd HH:mm:ss')}">
+                        <span class="shadow-input1"></span>
+                    </div>
+
+                    <div class="wrap-input2 validate-input" data-validate = "Subject is required">
+                        <ul style="display: flex;">
+                            <li class="input2" style="border-radius: 25px; padding: 20px; margin-inline: 10px " th:each="tag:${dto.tags}">[[|#${tag}]]</li>
+                        </ul>
+                    </div>
+
+                    <div class="wrap-input1 validate-input" data-validate = "Message is required">
+                        <textarea class="input1" name="content"  style="resize: none" disabled placeholder="내용">[[${dto.pbContent}]]</textarea>
+                        <span class="shadow-input1"></span>
+                    </div>
+                </div>
+            </div>
+
+
+            <!--지도 -->
+            <div class="map_wrap">
+                <div id="map" style="width:100%; height:500px; position:relative; overflow:hidden"></div>
+
+            </div>
+            <!--지도끝-->
+
+
+            <div class="my-4">
+                <div class="my-4">
+                    <div class="float-end">
+                        <button type="button" class="btn btn-primary" th:onclick="|modify(${dto.pbNo})|">Modify</button>
+                        <button type="button" class="btn btn-secondary" th:onclick="|moveList()|">List</button>
+                    </div>
+                </div>
+
+            </div>
+
+            </div>
+    </div>
+    <!-- end card-->
+
+
+
+<th:block  layout:fragment="script">
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=be49d75a3ddca2d7f6dfda5c02603d87&libraries=services"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <script th:inline="javascript">
+
+
+        let arr = [[${dto.locations}]]
+        let pbLat = arr[0].pbLat
+        let pbLng = arr[0].pbLng
+
+        // 이미지 지도에서 마커가 표시될 위치입니다
+        var markerPosition = new kakao.maps.LatLng(pbLat, pbLng);
+        console.log("------------------------------")
+
+
+        // 이미지 지도에 표시할 마커입니다
+        // 이미지 지도에 표시할 마커는 Object 형태입니다
+        var marker = {
+            position: markerPosition
+        };
+
+        var staticMapContainer = document.getElementById('map'), // 이미지 지도를 표시할 div
+            staticMapOption = {
+                center: new kakao.maps.LatLng(pbLat, pbLng), // 이미지 지도의 중심좌표
+                level: 3, // 이미지 지도의 확대 레벨
+                marker: marker // 이미지 지도에 표시할 마커
+            };
+
+        // 이미지 지도를 생성합니다
+        var staticMap = new kakao.maps.StaticMap(staticMapContainer, staticMapOption);
+
+
+
+
+
+        function modify(pbNo){
+
+            const page = [[${pageRequestDTO.page}]]
+            const size = [[${pageRequestDTO.size}]]
+            const type = [[${pageRequestDTO.type}]]
+            const keyword = [[${pageRequestDTO.keyword}]]
+
+            let searchQuery = ''
+
+            if(type && keyword){
+                searchQuery += `&type=${type}&keyword=${keyword}`
+            }
+
+            self.location=`/personalboard/modify?pbNo=${pbNo}&page=${page}&size=${size}`+searchQuery
+
+        }
+
+        function moveList(){
+
+            const page = [[${pageRequestDTO.page}]]
+            const size = [[${pageRequestDTO.size}]]
+            const type = [[${pageRequestDTO.type}]]
+            const keyword = [[${pageRequestDTO.keyword}]]
+
+            let searchQuery = ''
+
+            if(type && keyword){
+                searchQuery += `&type=${type}&keyword=${keyword}`
+            }
+
+            self.location=`/personalboard/list?page=${page}&size=${size}` + searchQuery
+
+        }
+
+    </script>
+
+
+
+    <script th:inline="javascript">
+
+
+    </script>
+
+
+
+</th:block>

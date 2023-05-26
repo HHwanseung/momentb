@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout/layout">
+<head>
+
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+
+<div layout:fragment="content">
+    <style>
+        .answer {
+            display: none;
+            padding-bottom: 30px;
+        }
+        #faq-title {
+            font-size: 25px;
+        }
+        .faq-content {
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .question {
+            font-size: 19px;
+            padding: 30px 0;
+            cursor: pointer;
+            border: none;
+            outline: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+        }
+        .question:hover {
+            color: #2962ff;
+        }
+        [id$="-toggle"] {
+            margin-right: 15px;
+        }
+    </style>
+
+    <link rel="stylesheet" th:href="@{/assets/css/canvasstyle.css}">
+    <section id="breadcrumbs" class="breadcrumbs">
+        <div class="container">
+
+            <ol>
+                <li><a href="index.html">The Moment</a></li>
+                <li>Personal Board</li>
+            </ol>
+            <h2> Register </h2>
+
+        </div>
+    </section><!-- End Breadcrumbs -->
+
+
+
+        <div class="container">
+            <div class="card-header">
+                Board Register
+            </div>
+            <div class="card-body">
+            <form th:action="@{/personalboard/register}" method="post">
+
+                    <div class="input-group mb-3">
+                        <span class="input-group-text">Writer</span>
+                        <input type="text" name="writer" class="form-control" placeholder="Writer">
+                    </div>
+
+                    <div class="input-group">
+                        <span class="input-group-text">Content</span>
+                        <textarea class="form-control" aria-label="With textarea" name="pbContent" rows="4"></textarea>
+                    </div>
+
+                    <div class="input-group">
+                        <span class="input-group-text">해시 태그를 입력해주세요. (,로 구분하여 입력해주세요. 예) 태그1,태그2,태그3) </span>
+                        <span contenteditable="true" type="text"  class="form-control tagInput" ></span>
+                    </div>
+
+
+
+                    <span id="faq-title">자주 묻는 질문(FAQ)</span>
+                    <div class="faq-content">
+                        <button class="question" id="que-1"><span id="que-1-toggle">+</span><span>'HTML'이란 무엇인가요?</span></button>
+                        <div class="answer" id="ans-1">하이퍼텍스트 마크업 언어(HyperText Markup Language)입니다.</div>
+                    </div>
+                    <div class="faq-content">
+                        <button class="question" id="que-2"><span id="que-2-toggle">+</span><span>'CSS'란 무엇인가요?</span></button>
+                        <div class="answer" id="ans-2">캐스케이딩 스타일 시트(Cascading Style Sheets)입니다.</div>
+                    </div>
+                    <div class="faq-content">
+                        <button class="question" id="que-3"><span id="que-3-toggle">+</span><span>'JavaScript'란 무엇인가요?</span></button>
+                        <div class="answer" id="ans-3">자바스크립트는 객체(Object)를 기초로 하는 스크립트 프로그래밍 언어입니다.</div>
+                    </div>
+
+
+                    <!--그림판시작-->
+                    <canvas id="jsCanvas" class="canvas"></canvas>
+                    <div class="controls"> <div class="controls_range">
+                        <input type="range" id="jsRange" min="0.1" max="5.0" value="2.5" step="0.1" /> </div>
+                        <div class="controls_btns"> <button id="jsMode">Fill</button>
+                            <button id="jsSave">Save</button> </div>
+                        <div class="controls_colors" id="jsColors">
+                            <div class="controls_color jsColor" style="background-color: #2c2c2c;"></div>
+                            <div class="controls_color jsColor" style="background-color: white;"></div>
+                            <div class="controls_color jsColor" style="background-color: #FF3B30;"></div>
+                            <div class="controls_color jsColor" style="background-color: #ff9500;"></div>
+                            <div class="controls_color jsColor" style="background-color: #4cd963;"></div>
+                            <div class="controls_color jsColor" style="background-color: #5ac8fa;"></div>
+                            <div class="controls_color jsColor" style="background-color: #0579ff;"></div>
+                            <div class="controls_color jsColor" style="background-color: #5856d6;"></div> </div> </div>
+
+
+
+                <!--그림판 끝-->
+                <!--파일업로드 시작-->
+                <style>
+                    .uploadResult {
+                        width: 100%;
+                        background-color: gray;
+                    }
+
+                    .uploadResult ul {
+                        display: flex;
+                        flex-flow: row;
+                        justify-content: center;
+                        align-items: center;
+                    }
+
+                    .uploadResult ul li {
+                        list-style: none;
+                        padding: 10px;
+                    }
+
+                    .uploadResult ul li img {
+                        width: 100px;
+                    }
+                </style>
+
+                <style>
+                    .bigPictureWrapper {
+                        position: absolute;
+                        display: none;
+                        justify-content: center;
+                        align-items: center;
+                        top:0%;
+                        width:100%;
+                        height:100%;
+                        background-color: gray;
+                        z-index: 100;
+                    }
+
+                    .bigPicture {
+                        position: relative;
+                        display:flex;
+                        justify-content: center;
+                        align-items: center;
+                    }
+                </style>
+
+                <div class="card">
+                    <div class="col-lg-12 card-body">
+                        <div class="panel panel-default">
+
+                            <div class="panel-heading">File Attach</div>
+                            <!-- /.panel-heading -->
+                            <div class="panel-body">
+                                <div class="form-group uploadDiv">
+                                    <input type="file" name='uploadFile'>
+                                </div>
+
+                                <div class='uploadResult'>
+                                    <ul>
+
+                                    </ul>
+                                </div>
+
+
+                            </div>
+                            <!--  end panel-body -->
+
+                        </div>
+                        <!--  end panel-body -->
+                    </div>
+                    <!-- end panel -->
+                </div>
+                <!-- 파일업로드끝-->
+
+
+                <div class="my-4">
+                        <div class="float-end hiddens">
+                          <button type="submit" class="btn btn-primary">Submit</button>
+                            <button type="result" class="btn btn-secondary">Reset</button>
+                        </div>
+                    </div>
+               </form>
+
+            </div>
+        </div>
+    </div>
+
+<th:block  layout:fragment="script">
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script th:src="@{/assets/js/canvasapp.js}"></script>
+    <script th:inline="javascript">
+
+
+        const inputFile = document.querySelector("input[name='uploadFile']")
+
+        const items = document.querySelectorAll('.question');
+
+        function openCloseAnswer() {
+            const answerId = this.id.replace('que', 'ans');
+
+            if(document.getElementById(answerId).style.display === 'block') {
+                document.getElementById(answerId).style.display = 'none';
+                document.getElementById(this.id + '-toggle').textContent = '+';
+            } else {
+                document.getElementById(answerId).style.display = 'block';
+                document.getElementById(this.id + '-toggle').textContent = '-';
+            }
+        }
+
+        items.forEach(item => item.addEventListener('click', openCloseAnswer));
+
+
+        document.querySelector("button[type='submit']").addEventListener("click",function(e){
+
+            e.preventDefault()
+            e.stopPropagation()
+
+
+            const liTags = document.querySelectorAll(".uploadResult ul li")
+
+            let str =""
+
+            for(let i = 0; i < liTags.length; i++){
+
+                var jobj = liTags[i]
+
+                str += "<input type='hidden' name='pictures["+i+"].fileName' value='"+jobj.getAttribute('data-filename')+"'>";
+                str += "<input type='hidden' name='pictures["+i+"].uuid' value='"+jobj.getAttribute('data-uuid')+"'>";
+                str += "<input type='hidden' name='pictures["+i+"].savePath' value='"+jobj.getAttribute("data-path")+"'>";
+
+
+            }
+
+            console.log(str);
+            const targetDiv = document.querySelector(".hiddens")
+
+            targetDiv.innerHTML += str
+
+
+
+            const hashTags = document.querySelector(".tagInput").innerHTML.split(",")
+
+            if(hashTags && hashTags.length > 0 && hashTags[0].trim() !== ''){
+                let tagStr =''
+                for(let i = 0; i < hashTags.length; i++){
+                    tagStr += "<input type='hidden' name='tags["+i+"]' value='"+ hashTags[i]+"'>"
+                }
+                targetDiv.innerHTML += tagStr
+            }
+
+            document.querySelector("form").submit()
+
+        },false)
+
+
+
+
+        inputFile.addEventListener("change",function(e){
+
+            var formData = new FormData()
+
+            var files = inputFile.files
+
+            for(var i = 0; i < files.length; i++){
+
+                console.log(files[i])
+
+                formData.append("uploadFiles", files[i]);
+
+            }
+
+            async function uploadData() {
+
+                const response = await axios.post('/uploadAjax', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                })
+
+                const data = response.data
+
+
+                showUploadFile(data)
+
+            }
+
+            uploadData()
+
+
+        },false)
+
+
+        const uploadUL = document.querySelector(".uploadResult ul")
+
+        function showUploadFile(arr){
+
+            console.log('--------------------------------')
+            console.log(arr)
+
+            let str = "";
+
+            for(let i = 0; i < arr.length; i++){
+
+                const obj = arr[i];
+
+                var fileCallPath =  encodeURIComponent( obj.savePath+ "/s_"+obj.uuid +"_"+obj.fileName)
+
+                str +=
+                    `<li data-path=${obj.savePath} data-uuid=${obj.uuid} data-filename=${obj.fileName} ><div>
+                  <span>${obj.fileName}</span>
+                 <button type='button' data-file=${fileCallPath} data-type='image' class='btn btn-warning btn-circle'><i class='fa fa-times'></i></button><br>
+                 <img src='/display?fileName=${fileCallPath}'>
+                 </div>
+                 </li>`
+
+            }
+
+            //console.log(str)
+            uploadUL.innerHTML += str
+
+
+        }
+
+        </script>
+
+
+</th:block>
