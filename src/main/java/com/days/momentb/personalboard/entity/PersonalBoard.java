@@ -17,7 +17,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@ToString(exclude = {"tags"})
+@ToString(exclude = {"tags","pictures","locations"})
 public class PersonalBoard {
 
     @Id
@@ -44,6 +44,24 @@ public class PersonalBoard {
     @BatchSize(size = 50)
     @Builder.Default
     private Set<String> tags = new HashSet<>();
+
+
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name="personal_board_picture")
+    @Fetch(value = FetchMode.JOIN)
+    @BatchSize(size = 50)
+    private Set<PersonalBoardPicture> pictures;
+
+
+
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name="personal_board_location")
+    @Fetch(value = FetchMode.JOIN)
+    @BatchSize(size = 50)
+    private Set<PersonalBoardLocation> locations;
+
+
+
 
 
 }
