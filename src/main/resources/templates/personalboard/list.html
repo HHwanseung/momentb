@@ -21,142 +21,133 @@
 
         </div>
     </section><!-- End Breadcrumbs -->
+가    <!--portfolio ex-->
+    <section id="portfolio" class="portfolio">
+        <div class="container">
 
-
-    <div class="card-body">
-
-        <div class="float-end" >
-            <select id="searchType"  >
-                <option value=""  th:selected="${pageRequestDTO.type} == null">-----------</option>
-                <option value="T"  th:selected="${pageRequestDTO.type} =='T'">제목</option>
-                <option value="I"  th:selected="${pageRequestDTO.type} =='W'">작성자</option>
-                <option value="TI" th:selected="${pageRequestDTO.type} == 'TC'">제목/내용</option>
-            </select>
-            <input type="text" id="keyword"  th:value="${pageRequestDTO.keyword}">
-            <button id="searchBtn" class="btn btn-info" onclick="search()">Search</button>
-        </div>
-
-
-        <table class="table">
-            <thead>
-            <tr>
-                <th scope="col">No</th>
-                <th scope="col">memId</th>
-                <th scope="col">content</th>
-                <th scope="col">RegDate</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="board:${responseDTO.dtoList}">
-                <th scope="row">[[${board.pbNo}]]</th>
-                <td><a th:href="|javascript:movePage(${responseDTO.page}, ${board.pbNo} )|">[[${board.pbContent}]]</a> </td>
-                <td>[[${ board.memId}]]</td>
-                <td>[[${#temporals.format(board.pbRegDate, 'yyyy/MM/dd')}]]</td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
-
-    <div class="d-flex justify-content-center">
-        <ul class="pagination">
-            <li th:if="${responseDTO.prev}" class="page-item">
-                <a class="page-link" th:href="|javascript:movePage(${responseDTO.start-1})|" aria-label="Previous">
-                    <span aria-hidden="true">&laquo;</span>
-                    <span class="sr-only">Previous</span>
-                </a>
-            </li>
-
-            <li th:each="num: ${#numbers.sequence( responseDTO.start , responseDTO.end)}" th:class="|page-item ${responseDTO.page == num?'active':''}|">
-                <a class="page-link" th:href="|javascript:movePage(${num})|">[[${num}]]</a>
-            </li>
-
-            <li th:if="${responseDTO.next}" class="page-item">
-                <a class="page-link" th:href="|javascript:movePage(${responseDTO.end+1})|" aria-label="Next">
-                    <span aria-hidden="true">&raquo;</span>
-                    <span class="sr-only">Next</span>
-                </a>
-            </li>
-
-        </ul>
-
-    </div>
-
-</div>
-
-
-<th:block  layout:fragment="script">
-
-
-    <div class="modal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Modal title</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <p>Modal body text goes here.</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
+            <div class="row">
+                <div class="col-lg-12 d-flex justify-content-center">
+                    <ul id="portfolio-flters">
+                        <li data-filter="*" class="filter-active">All</li>
+                        <li data-filter=".filter-app">App</li>
+                        <li data-filter=".filter-cat">Cat</li>
+                        <li data-filter=".filter-web">Web</li>
+                        <li data-filter=".filter-app">Animal</li>
+                        <li data-filter=".filter-card">Landscape</li>
+                    </ul>
                 </div>
             </div>
-        </div>
-    </div>
+            <div class="card-body">
+                <div class="row portfolio-container">
+                    <tr th:each="board:${responseDTO.dtoList}">
+                        <div class="col-lg-4 col-md-6 portfolio-item filter-cat" id=${board.pbNo}>
+                            <div class="portfolio-wrap" style="text-align: center">
+                                <img th:each="picture:${board.pictures}" th:src="@{/display(fileName=${picture.getLink()})}" class="img-fluid" th:title="${picture.imageLabel}" alt="">
+                                <div class="portfolio-info" th:onclick="'location.href=\''+|javascript:movePage(${responseDTO.page}, ${board.pbNo})|+'\''" style="cursor:pointer;">
+                                    <h4 th:each="tag:${board.tags}">[[|#${tag}]]</h4>
+                                    <h1>
+                                        <p th:each="picture:${board.pictures}">[[|${picture.imageLabel}]]</p>
+                                        <p th:text="${#temporals.format(board.pbRegDate, 'yyyy-MM-dd HH:mm')}">[[${board.pbRegDate}]]</p>
+                                    </h1>
+                                </div>
+                            </div>
+                        </div>
+                    </tr>
+                </div>
+            </div>
 
 
 
-    <script th:inline="javascript">
+                <select id="searchType"  >
+                    <option value="T"  th:selected="${pageRequestDTO.type} =='T'">제목</option>
+                    <option value="C"  th:selected="${pageRequestDTO.type} =='C'">내용</option>
+                    <option value="W"  th:selected="${pageRequestDTO.type} =='W'">작성자</option>
+                    <option value="TC" th:selected="${pageRequestDTO.type} == 'TC'">제목/내용</option>
+                    <option value="TCW" th:selected="${pageRequestDTO.type} == 'TCW'" >제목 혹은 내용 혹은 작성자</option>
+                    <option value="R" th:selected="${pageRequestDTO.type} == 'R'" >댓글내용</option>
+                </select>
+                <input type="text" id="keyword"  th:value="${pageRequestDTO.keyword}">
+                <button id="searchBtn" class="btn btn-info" onclick="search()">Search</button>
 
-        const myModal = new bootstrap.Modal(document.querySelector(".modal"))
+<!--            페이징처리-->
+                <div class="d-flex justify-content-center">
+                    <ul class="pagination">
+                        <li th:if="${responseDTO.prev}" class="page-item">
+                            <a class="page-link" th:href="|javascript:movePage(${responseDTO.start-1})|" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                                <span class="sr-only">Previous</span>
+                            </a>
+                        </li>
 
-        const result = [[${result}]]
+                        <li th:each="num: ${#numbers.sequence( responseDTO.start , responseDTO.end)}" th:class="|page-item ${responseDTO.page == num?'active':''}|">
+                            <a class="page-link" th:href="|javascript:movePage(${num})|">[[${num}]]</a>
+                        </li>
 
-        if(result){
-            myModal.show()
-        }
+                        <li th:if="${responseDTO.next}" class="page-item">
+                            <a class="page-link" th:href="|javascript:movePage(${responseDTO.end+1})|" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                                <span class="sr-only">Next</span>
+                            </a>
+                        </li>
 
-        const pageRequest = [[${pageRequestDTO}]]
+                    </ul>
 
-        function movePage(page, pbNo) {
-
-            console.log(pageRequest)
-
-            let uri ="";
-
-            const type = pageRequest.type
-            const keyword = pageRequest.keyword
-
-            let searchQuery = ''
-            if(type && keyword){
-                searchQuery += `&type=${type}&keyword=${keyword}`
-            }
-
-            if(pbNo) {
-                uri = `/personalboard/read?pbNo=${pbNo}&page=${page}` + searchQuery
-            }else {
-                uri = `/personalboard/list?page=${page}` + searchQuery
-            }
-            self.location = uri
-        }
-
-        function search() {
-            const searchSelect = document.querySelector("#searchType")
-
-            const type = searchSelect.options[searchSelect.selectedIndex].value
-
-            const keyword = encodeURI(document.querySelector("#keyword").value)
-
-            console.log("type", type, "keyword", keyword)
-
-            self.location =`/personalboard/list?page=1&type=${type}&keyword=${keyword}`
-        }
-
-    </script>
+                </div>
 
 
-</th:block>
+
+            <th:block  layout:fragment="script">
+
+
+                <script th:inline="javascript">
+
+
+                    const result = [[${result}]]
+
+                    if(result){
+                        myModal.show()
+                    }
+
+                    const pageRequest = [[${pageRequestDTO}]]
+
+                    function movePage(page, pbNo) {
+
+                        console.log(pageRequest)
+
+                        let uri ="";
+
+                        const type = pageRequest.type
+                        const keyword = pageRequest.keyword
+
+                        let searchQuery = ''
+                        if(type && keyword){
+                            searchQuery += `&type=${type}&keyword=${keyword}`
+                        }
+
+                        if(pbNo) {
+                            uri = `/personalboard/read?pbNo=${pbNo}&page=${page}` + searchQuery
+                        }else {
+                            uri = `/personalboard/list?page=${page}` + searchQuery
+                        }
+                        self.location = uri
+                    }
+
+                    function search() {
+                        const searchSelect = document.querySelector("#searchType")
+
+                        const type = searchSelect.options[searchSelect.selectedIndex].value
+
+                        const keyword = encodeURI(document.querySelector("#keyword").value)
+
+                        console.log("type", type, "keyword", keyword)
+
+                        self.location =`/personalboard/list?page=1&type=${type}&keyword=${keyword}`
+                    }
+
+                </script>
+
+
+            </th:block>
 
 
 </body>
