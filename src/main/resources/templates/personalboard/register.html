@@ -8,6 +8,7 @@
 </head>
 <body>
 
+
 <div layout:fragment="content">
     <style>
 
@@ -52,7 +53,6 @@
             justify-content: center;
         }
 
-
     </style>
 
     <link rel="stylesheet" th:href="@{/assets/css/canvasstyle.css}">
@@ -71,13 +71,11 @@
 
 
 
-    <div class="container">
-        <div class="card-header">
-            Board Register
-        </div>
-        <br>
-
-        <div class="card-body">
+        <div class="container">
+            <div class="card-header">
+                Board Register
+            </div>
+            <div class="card-body">
             <form th:action="@{/personalboard/register}" method="post">
                 <div class="row">
 
@@ -90,10 +88,11 @@
                     </div>
 
                     <!-- Contents -->
-                    <div class="col-lg-4" id="tagContent" >
 
-                        <div class="wrap-input1 validate-input" data-validate = "Subject is required" style="margin-top: 50px">
-                            <input class="input1" type="text" name="tag" placeholder="해시 태그를 입력해주세요 예) 태그1,태그2,태그3)">
+                    <div class="col-lg-5">
+                        <div class="wrap-input1 input-group">
+                            <span class="input-group-text"> 해시 태그 입력  (,로 구분하여 입력해주세요. 예) 태그1,태그2,태그3) </span>
+                            <span contenteditable="true" type="text" class="input1 form-control tagInput" ></span>
                             <span class="shadow-input1"></span>
                         </div>
 
@@ -104,32 +103,10 @@
                     </div>
                 </div>
 
+
+                    <!-- folder-->
                 <br>
-                <div class="card">
-                    <div class="col-lg-12 card-body">
-                        <div class="panel panel-default">
-
-                            <div class="panel-heading">File Attach</div>
-                            <!-- /.panel-heading -->
-                            <div class="panel-body">
-                                <div class="form-group uploadDiv">
-                                    <input type="file" name='uploadFile'>
-                                </div>
-
-                                <div class='uploadResult'>
-                                    <ul>
-
-                                    </ul>
-                                </div>
-                            </div><!--  end panel-body -->
-                        </div><!--  end panel-body -->
-                    </div><!-- end panel -->
-                </div><!-- 파일업로드끝-->
-                <br>
-
-                <!-- folder-->
-
-                <span id="faq-title">기능</span>
+                <span id="faq-title">다양한 기능</span>
 
                 <div class="faq-content">
                     <button type="button" class="question" id="que-2"><span id="que-2-toggle">+</span><span>위치표시</span></button>
@@ -150,22 +127,25 @@
                                 <div id="pagination"></div>
                             </div>
                         </div>
+
+                        <br>
                         <div>
-                            <!-- 위도 및 경도 좌표 및 위치정보 -->
+                        <!-- 위도 및 경도 좌표 및 위치정보 -->
                             <input type="text" id="fulladdress" name="fulladdress" style="width:100%;" disabled readonly>
-                            <input type="hidden" id="pName" name="pName" value="" readonly>
-                            <input type="hidden" id="pAddress" name="pAddress" value="" readonly>
-                            <input type="hidden" id="pLat" name="pLat" value="" readonly>
-                            <input type="hidden" id="pLng" name="pLng" value="" readonly>
+                            <input type="hidden" id="pbName" name="locations[0].pbName" value="" readonly>
+                            <input type="hidden" id="pbAddress" name="locations[0].pbAddress" value="" readonly>
+                            <input type="hidden" id="pbLat" name="locations[0].pbLat" value="" readonly>
+                            <input type="hidden" id="pbLng" name="locations[0].pbLng" value="" readonly>
                         </div>
                     </div>
                 </div>
 
+                <!--지도 끝-->
+                <!--그림판 시작-->
                 <div class="faq-content">
                     <button type="button" class="question" id="que-3"><span id="que-3-toggle">+</span><span>캔버스</span></button>
                     <div class="answer" id="ans-3" style="text-align: center" >
 
-                        <!--그림판시작-->
                         <canvas id="jsCanvas" class="canvas"></canvas>
                         <div class="controls"> <div class="controls_range">
                             <input type="range" id="jsRange" min="0.1" max="5.0" value="2.5" step="0.1" /> </div>
@@ -184,237 +164,265 @@
                         </div>
                     </div>
                 </div>
+                <!--그림판 끝-->
+                <!--파일업로드 시작-->
 
-            <!--그림판 끝-->
+                <br>
+                <div class="card">
+                    <div class="col-lg-12 card-body">
+                        <div class="panel panel-default">
+
+                            <div class="panel-heading">Uploaded File</div>
+                            <!-- /.panel-heading -->
+                            <div class="panel-body">
+                                <div class="form-group uploadDiv">
+                                </div>
+
+                                <div class='uploadResult'>
+                                    <ul>
+
+                                    </ul>
+                                </div>
+                            </div><!--  end panel-body -->
+                        </div><!--  end panel-body -->
+                    </div><!-- end panel -->
+                </div><!-- 파일업로드끝-->
+                <br>
 
                 <div class="my-4">
                     <div class="float-end hiddens">
-                        <button type="submit" class="btn btn-primary">Submit</button>
-                        <button type="result" class="btn btn-secondary">Reset</button>
+                      <button type="submit" class="btn btn-primary">Submit</button>
+                      <button type="result" class="btn btn-secondary">Reset</button>
                     </div>
                 </div>
-            </form>
+               </form>
+            </div>
         </div>
     </div>
-</div>
+</body>
+</html>
 
 <th:block  layout:fragment="script">
-    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=be49d75a3ddca2d7f6dfda5c02603d87&libraries=services"></script>
+    <script type="text/javascript" src="//dapi능.kakao.com/v2/maps/sdk.js?appkey=be49d75a3ddca2d7f6dfda5c02603d87&libraries=services"></script>
     <script th:src="@{/assets/js/holder.js}"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script th:src="@{/assets/js/canvasapp.js}"></script>
     <script th:inline="javascript">
 
-        //map
+//--지도 시작 --
 
-        // 마커를 담을 배열입니다
-        var markers = [];
+//map
 
-        var mapContainer = document.getElementById('map'), // 지도를 표시할 div
-            mapOption = {
-                center: new kakao.maps.LatLng(37.566826, 126.9786567), // 지도의 중심좌표
-                level: 3 // 지도의 확대 레벨
+// 마커를 담을 배열입니다
+var markers = [];
+
+var mapContainer = document.getElementById('map'), // 지도를 표시할 div
+    mapOption = {
+        center: new kakao.maps.LatLng(37.566826, 126.9786567), // 지도의 중심좌표
+        level: 3 // 지도의 확대 레벨
+    };
+
+// 지도를 생성합니다
+var map = new kakao.maps.Map(mapContainer, mapOption);
+
+// 장소 검색 객체를 생성합니다
+var ps = new kakao.maps.services.Places();
+
+// 검색 결과 목록이나 마커를 클릭했을 때 장소명을 표출할 인포윈도우를 생성합니다
+var infowindow = new kakao.maps.InfoWindow({zIndex: 1});
+
+// 키워드로 장소를 검색합니다
+searchPlaces();
+
+// 키워드 검색을 요청하는 함수입니다
+function searchPlaces() {
+
+    var keyword = document.getElementById('keyword').value;
+
+    if (!keyword.replace(/^\s+|\s+$/g, '')) {
+        alert('키워드를 입력해주세요!');
+        return false;
+    }
+
+    // 장소검색 객체를 통해 키워드로 장소검색을 요청합니다
+    ps.keywordSearch(keyword, placesSearchCB);
+}
+
+// 장소검색이 완료됐을 때 호출되는 콜백함수 입니다
+function placesSearchCB(data, status, pagination) {
+    if (status === kakao.maps.services.Status.OK) {
+
+        // 정상적으로 검색이 완료됐으면
+        // 검색 목록과 마커를 표출합니다
+        displayPlaces(data);
+
+        // 페이지 번호를 표출합니다
+        // displayPagination(pagination);
+
+    } else if (status === kakao.maps.services.Status.ZERO_RESULT) {
+
+        alert('검색 결과가 존재하지 않습니다.');
+        return;
+
+    } else if (status === kakao.maps.services.Status.ERROR) {
+
+        alert('검색 결과 중 오류가 발생했습니다.');
+        return;
+
+    }
+}
+
+// 검색 결과 목록과 마커를 표출하는 함수입니다
+function displayPlaces(places) {
+
+    var listEl = document.getElementById('placesList'),
+        menuEl = document.getElementById('menu_wrap'),
+        fragment = document.createDocumentFragment(),
+        bounds = new kakao.maps.LatLngBounds(),
+        listStr = '';
+
+    // 검색 결과 목록에 추가된 항목들을 제거합니다
+    removeAllChildNods(listEl);
+
+    // 지도에 표시되고 있는 마커를 제거합니다
+    removeMarker();
+
+    for (var i = 0; i < places.length; i++) {
+
+        // 마커를 생성하고 지도에 표시합니다
+        var placePosition = new kakao.maps.LatLng(places[i].y, places[i].x),
+            marker = addMarker(placePosition, i),
+            itemEl = getListItem(i, places[i]); // 검색 결과 항목 Element를 생성합니다
+
+        // 검색된 장소 위치를 기준으로 지도 범위를 재설정하기위해
+        // LatLngBounds 객체에 좌표를 추가합니다
+        bounds.extend(placePosition);
+
+        // 마커와 검색결과 항목에 mouseover 했을때
+        // 해당 장소에 인포윈도우에 장소명을 표시합니다
+        // mouseout 했을 때는 인포윈도우를 닫습니다
+        (function (marker, pbName, pbAddressress, pbAddress, pbLat, pbLng) {
+            kakao.maps.event.addListener(marker, 'mouseover', function () {
+                displayInfowindow(marker, pbName);
+            });
+
+            kakao.maps.event.addListener(map, 'mouseout', function () {
+                infowindow.close();
+            });
+
+            // 리스트의 아이템을 클릭하면 정보들을 hidden 영역으로 전송
+            itemEl.onclick = function () {
+                if (pbAddressress) {
+                    document.getElementById('fulladdress').value = "[" + pbName + "]" + pbAddressress;
+                } else {
+                    document.getElementById('fulladdress').value = "[" + pbName + "]" + pbAddress;
+                }
+
+                document.getElementById('pbName').value = pbName;
+                if (pbAddressress) {
+                    document.getElementById('pbAddress').value = pbAddressress;
+                } else {
+                    document.getElementById('pbAddress').value = pbAddress;
+                }
+                document.getElementById('pbLat').value = pbLat;
+                document.getElementById('pbLng').value = pbLng;
+
+                console.log(pbLat)
+                console.log(pbLng)
             };
 
-        // 지도를 생성합니다
-        var map = new kakao.maps.Map(mapContainer, mapOption);
+            itemEl.onmouseover = function () {
+                displayInfowindow(marker, pbName);
+            };
 
-        // 장소 검색 객체를 생성합니다
-        var ps = new kakao.maps.services.Places();
+            itemEl.onmouseout = function () {
+                infowindow.close();
+            };
+        })(marker, places[i].place_name, places[i].road_address_name, places[i].address_name, places[i].y, places[i].x);
 
-        // 검색 결과 목록이나 마커를 클릭했을 때 장소명을 표출할 인포윈도우를 생성합니다
-        var infowindow = new kakao.maps.InfoWindow({zIndex: 1});
+        fragment.appendChild(itemEl);
+    }
 
-        // 키워드로 장소를 검색합니다
-        searchPlaces();
+    // 검색결과 항목들을 검색결과 목록 Elemnet에 추가합니다
+    listEl.appendChild(fragment);
+    menuEl.scrollTop = 0;
 
-        // 키워드 검색을 요청하는 함수입니다
-        function searchPlaces() {
+    // 검색된 장소 위치를 기준으로 지도 범위를 재설정합니다
+    map.setBounds(bounds);
+}
 
-            var keyword = document.getElementById('keyword').value;
+// 검색결과 항목을 Element로 반환하는 함수입니다
+function getListItem(index, places) {
 
-            if (!keyword.replace(/^\s+|\s+$/g, '')) {
-                alert('키워드를 입력해주세요!');
-                return false;
-            }
+    var el = document.createElement('li'),
+        itemStr = '<span class="markerbg marker_' + (index + 1) + '"></span>' +
+            '<div class="info" style="cursor:pointer;">' +
+            '   <h5>' + places.place_name + '</h5>';
 
-            // 장소검색 객체를 통해 키워드로 장소검색을 요청합니다
-            ps.keywordSearch(keyword, placesSearchCB);
-        }
+    if (places.road_address_name) {
+        itemStr += '    <span>' + places.road_address_name + '</span>' +
+            '   <span class="jibun gray">' + places.address_name + '</span>';
+    } else {
+        itemStr += '    <span>' + places.address_name + '</span>';
+    }
+    itemStr += '  <span class="tel">' + places.phone + '</span>';
+    +
+        '</div>';
 
-        // 장소검색이 완료됐을 때 호출되는 콜백함수 입니다
-        function placesSearchCB(data, status, pagination) {
-            if (status === kakao.maps.services.Status.OK) {
+    el.innerHTML = itemStr;
+    el.className = 'item';
 
-                // 정상적으로 검색이 완료됐으면
-                // 검색 목록과 마커를 표출합니다
-                displayPlaces(data);
-
-                // 페이지 번호를 표출합니다
-                // displayPagination(pagination);
-
-            } else if (status === kakao.maps.services.Status.ZERO_RESULT) {
-
-                alert('검색 결과가 존재하지 않습니다.');
-                return;
-
-            } else if (status === kakao.maps.services.Status.ERROR) {
-
-                alert('검색 결과 중 오류가 발생했습니다.');
-                return;
-
-            }
-        }
-
-        // 검색 결과 목록과 마커를 표출하는 함수입니다
-        function displayPlaces(places) {
-
-            var listEl = document.getElementById('placesList'),
-                menuEl = document.getElementById('menu_wrap'),
-                fragment = document.createDocumentFragment(),
-                bounds = new kakao.maps.LatLngBounds(),
-                listStr = '';
-
-            // 검색 결과 목록에 추가된 항목들을 제거합니다
-            removeAllChildNods(listEl);
-
-            // 지도에 표시되고 있는 마커를 제거합니다
-            removeMarker();
-
-            for (var i = 0; i < places.length; i++) {
-
-                // 마커를 생성하고 지도에 표시합니다
-                var placePosition = new kakao.maps.LatLng(places[i].y, places[i].x),
-                    marker = addMarker(placePosition, i),
-                    itemEl = getListItem(i, places[i]); // 검색 결과 항목 Element를 생성합니다
-
-                // 검색된 장소 위치를 기준으로 지도 범위를 재설정하기위해
-                // LatLngBounds 객체에 좌표를 추가합니다
-                bounds.extend(placePosition);
-
-                // 마커와 검색결과 항목에 mouseover 했을때
-                // 해당 장소에 인포윈도우에 장소명을 표시합니다
-                // mouseout 했을 때는 인포윈도우를 닫습니다
-                (function (marker, pName, pAddressress, pAddress, pLat, pLng) {
-                    kakao.maps.event.addListener(marker, 'mouseover', function () {
-                        displayInfowindow(marker, pName);
-                    });
-
-                    kakao.maps.event.addListener(map, 'mouseout', function () {
-                        infowindow.close();
-                    });
-
-                    // 리스트의 아이템을 클릭하면 정보들을 hidden 영역으로 전송
-                    itemEl.onclick = function () {
-                        if (pAddressress) {
-                            document.getElementById('fulladdress').value = "[" + pName + "]" + pAddressress;
-                        } else {
-                            document.getElementById('fulladdress').value = "[" + pName + "]" + pAddress;
-                        }
-
-                        document.getElementById('pName').value = pName;
-                        if (pAddressress) {
-                            document.getElementById('pAddress').value = pAddressress;
-                        } else {
-                            document.getElementById('pAddress').value = pAddress;
-                        }
-                        document.getElementById('pLat').value = pLat;
-                        document.getElementById('pLng').value = pLng;
-                    };
-
-                    itemEl.onmouseover = function () {
-                        displayInfowindow(marker, pName);
-                    };
-
-                    itemEl.onmouseout = function () {
-                        infowindow.close();
-                    };
-                })(marker, places[i].place_name, places[i].road_address_name, places[i].address_name, places[i].y, places[i].x);
-
-                fragment.appendChild(itemEl);
-            }
-
-            // 검색결과 항목들을 검색결과 목록 Elemnet에 추가합니다
-            listEl.appendChild(fragment);
-            menuEl.scrollTop = 0;
-
-            // 검색된 장소 위치를 기준으로 지도 범위를 재설정합니다
-            map.setBounds(bounds);
-        }
-
-        // 검색결과 항목을 Element로 반환하는 함수입니다
-        function getListItem(index, places) {
-
-            var el = document.createElement('li'),
-                itemStr = '<span class="markerbg marker_' + (index + 1) + '"></span>' +
-                    '<div class="info" style="cursor:pointer;">' +
-                    '   <h5>' + places.place_name + '</h5>';
-
-            if (places.road_address_name) {
-                itemStr += '    <span>' + places.road_address_name + '</span>' +
-                    '   <span class="jibun gray">' + places.address_name + '</span>';
-            } else {
-                itemStr += '    <span>' + places.address_name + '</span>';
-            }
-            itemStr += '  <span class="tel">' + places.phone + '</span>';
-            +
-                '</div>';
-
-            el.innerHTML = itemStr;
-            el.className = 'item';
-
-            return el;
-        }
+    return el;
+}
 
 
-        // 마커를 생성하고 지도 위에 마커를 표시하는 함수입니다
-        function addMarker(position, idx, title) {
-            var imageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png', // 마커 이미지 url, 스프라이트 이미지를 씁니다
-                imageSize = new kakao.maps.Size(36, 37),  // 마커 이미지의 크기
-                imgOptions = {
-                    spriteSize: new kakao.maps.Size(36, 691), // 스프라이트 이미지의 크기
-                    spriteOrigin: new kakao.maps.Point(0, (idx * 46) + 10), // 스프라이트 이미지 중 사용할 영역의 좌상단 좌표
-                    offset: new kakao.maps.Point(13, 37) // 마커 좌표에 일치시킬 이미지 내에서의 좌표
-                },
-                markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imgOptions),
-                marker = new kakao.maps.Marker({
-                    position: position, // 마커의 위치
-                    image: markerImage
-                });
+// 마커를 생성하고 지도 위에 마커를 표시하는 함수입니다
+function addMarker(position, idx, title) {
+    var imageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png', // 마커 이미지 url, 스프라이트 이미지를 씁니다
+        imageSize = new kakao.maps.Size(36, 37),  // 마커 이미지의 크기
+        imgOptions = {
+            spriteSize: new kakao.maps.Size(36, 691), // 스프라이트 이미지의 크기
+            spriteOrigin: new kakao.maps.Point(0, (idx * 46) + 10), // 스프라이트 이미지 중 사용할 영역의 좌상단 좌표
+            offset: new kakao.maps.Point(13, 37) // 마커 좌표에 일치시킬 이미지 내에서의 좌표
+        },
+        markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imgOptions),
+        marker = new kakao.maps.Marker({
+            position: position, // 마커의 위치
+            image: markerImage
+        });
 
-            marker.setMap(map); // 지도 위에 마커를 표출합니다
-            markers.push(marker);  // 배열에 생성된 마커를 추가합니다
+    marker.setMap(map); // 지도 위에 마커를 표출합니다
+    markers.push(marker);  // 배열에 생성된 마커를 추가합니다
 
-            return marker;
-        }
+    return marker;
+}
 
-        // 지도 위에 표시되고 있는 마커를 모두 제거합니다
-        function removeMarker() {
-            for (var i = 0; i < markers.length; i++) {
-                markers[i].setMap(null);
-            }
-            markers = [];
-        }
+// 지도 위에 표시되고 있는 마커를 모두 제거합니다
+function removeMarker() {
+    for (var i = 0; i < markers.length; i++) {
+        markers[i].setMap(null);
+    }
+    markers = [];
+}
 
-        // 검색결과 목록 또는 마커를 클릭했을 때 호출되는 함수입니다
-        // 인포윈도우에 장소명을 표시합니다
-        function displayInfowindow(marker, title) {
-            var content = '<div style="padding:5px;z-index:1;">' + title + '</div>';
+// 검색결과 목록 또는 마커를 클릭했을 때 호출되는 함수입니다
+// 인포윈도우에 장소명을 표시합니다
+function displayInfowindow(marker, title) {
+    var content = '<div style="padding:5px;z-index:1;">' + title + '</div>';
 
-            infowindow.setContent(content);
-            infowindow.open(map, marker);
-        }
+    infowindow.setContent(content);
+    infowindow.open(map, marker);
+}
 
-        // 검색결과 목록의 자식 Element를 제거하는 함수입니다
-        function removeAllChildNods(el) {
-            while (el.hasChildNodes()) {
-                el.removeChild(el.lastChild);
-            }
-        }
+// 검색결과 목록의 자식 Element를 제거하는 함수입니다
+function removeAllChildNods(el) {
+    while (el.hasChildNodes()) {
+        el.removeChild(el.lastChild);
+    }
+}
 
-        //------------------------------kakao Map end----------------------------
+//------------------------------kakao Map end----------------------------
 
-        //------------------------------Upload File----------------------------
         const inputFile = document.querySelector("input[name='uploadFile']")
 
         const items = document.querySelectorAll('.question');
@@ -474,50 +482,16 @@
                 targetDiv.innerHTML += tagStr
             }
 
-            document.querySelector("form").submit()
+            console.log(targetDiv.innerHTML)
+
+         document.querySelector("form").submit()
 
         },false)
 
 
 
 
-        inputFile.addEventListener("change",function(e){
 
-            var formData = new FormData()
-
-            var files = inputFile.files
-
-            for(var i = 0; i < files.length; i++){
-
-                console.log(files[i])
-
-                formData.append("uploadFiles", files[i]);
-
-            }
-
-            async function uploadData() {
-
-                const response = await axios.post('/uploadAjax', formData, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data'
-                    }
-                })
-
-                const data = response.data
-
-                console.log(data)
-
-                showUploadFile(data)
-
-            }
-
-            uploadData()
-
-
-        },false)
-
-
-        const uploadUL = document.querySelector(".uploadResult ul")
 
         function showUploadFile(arr){
 
@@ -535,6 +509,7 @@
                 var fileCallPath =  encodeURIComponent( obj.savePath+ "/s_"+obj.uuid +"_"+obj.fileName)
 
 
+
                 str +=
                     `<li data-path=${obj.savePath} data-uuid=${obj.uuid} data-filename=${obj.fileName} data-imagelabel=${obj.imageLabel} data-selfdrawing="false"><div>
                   <span>${obj.fileName}</span>
@@ -549,7 +524,9 @@
             uploadUL.innerHTML += str
 
 
-    </script>
+        }
+
+        </script>
 
 
 </th:block>
